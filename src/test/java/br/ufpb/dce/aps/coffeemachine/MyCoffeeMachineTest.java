@@ -10,5 +10,6 @@ public class MyCoffeeMachineTest extends CoffeeMachineTest{
 	}
 
 	
+	
 	 
 }
