@@ -16,17 +16,18 @@ public class MyCoffeeMachine implements CoffeeMachine{
 
 	public void insertCoin(Coin coin) {
 		this.valor += coin.getValue();
-		this.factory.getDisplay().info("Total: US$ "+getDolares(coin)+"."+ getCentavos(coin));
+		this.factory.getDisplay().info("Total: US$ "+ getDolares(coin)+"."+ getCentavos(coin));
 	}
 	
 	public int getCentavos(Coin coin){
-		this.valor = coin.getValue();
-		return this.valor%100;
+		this.centavo += coin.getValue();
+		return this.centavo%100;
 	}
 	
 	public int getDolares(Coin coin){
-		this.valor = coin.getValue();
-		return this.valor/100;
+		this.dolar += coin.getValue();
+		return this.dolar/100;
 		
 	}
+
 }
