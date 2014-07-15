@@ -2,6 +2,7 @@ package br.ufpb.dce.aps.coffeemachine.impl;
 
 import static org.mockito.Mockito.verify;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
+import br.ufpb.dce.aps.coffeemachine.CoffeeMachineException;
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
 
@@ -14,10 +15,15 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		factory.getDisplay().info("Insert coins and select a drink!");
 	}
 
-	public void insertCoin(Coin coin) {
+	public void insertCoin(Coin coin) throws CoffeeMachineException{
+		if(coin == null){
+			throw new CoffeeMachineException("");
+		}
 		this.valor += coin.getValue();
 		this.factory.getDisplay().info("Total: US$ "+ getDolares(coin)+"."+ getCentavos(coin));
+	
 	}
+
 	
 	public int getCentavos(Coin coin){
 		this.centavo += coin.getValue();
