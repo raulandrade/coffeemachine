@@ -23,7 +23,6 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		this.factory.getDisplay().info("Total: US$ "+ getDolares(coin)+"."+ getCentavos(coin));
 	
 	}
-
 	
 	public int getCentavos(Coin coin){
 		this.centavo += coin.getValue();
@@ -33,6 +32,16 @@ public class MyCoffeeMachine implements CoffeeMachine{
 	public int getDolares(Coin coin){
 		this.dolar += coin.getValue();
 		return this.dolar/100;
+		
+	}
+
+	public void cancel() throws CoffeeMachineException{
+		
+		if (centavo == 0  & dolar == 0){
+			throw new CoffeeMachineException("Sessão Cancelada");
+		}
+		
+		
 		
 	}
 
