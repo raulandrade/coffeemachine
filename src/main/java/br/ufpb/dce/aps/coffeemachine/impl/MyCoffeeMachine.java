@@ -1,18 +1,21 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
-import static org.mockito.Mockito.verify;
+import br.ufpb.dce.aps.coffeemachine.CashBox;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachineException;
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
+import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class MyCoffeeMachine implements CoffeeMachine{
  	public final ComponentsFactory factory;
  	public int valor =0, centavo, dolar ;
+ 	public CashBox cb;
 	
 	public MyCoffeeMachine(ComponentsFactory factory){
 		this.factory = factory;
 		factory.getDisplay().info("Insert coins and select a drink!");
+		cb = factory.getCashBox();
 	}
 
 	public void insertCoin(Coin coin) throws CoffeeMachineException{
@@ -41,8 +44,9 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			throw new CoffeeMachineException("Sessão Cancelada");
 		}
 		
-		
-		
+		factory.getDisplay().warn(Messages.CANCEL_MESSAGE);
+		cb.release(Coin.halfDollar);
+		factory.getDisplay().info(Messages.INSERT_COINS_MESSAGE);		
 	}
 
 }
