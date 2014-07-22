@@ -1,6 +1,7 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
 import static org.mockito.Matchers.anyDouble;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,19 +72,24 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		factory.getWaterDispenser().contains(1.0);
 		factory.getCoffeePowderDispenser().contains(1.0);
 		
+		if (drink == Drink.BLACK_SUGAR){
+			factory.getSugarDispenser().contains(1.0);
+		}
+			
 		factory.getDisplay().info(Messages.MIXING);
 		factory.getCoffeePowderDispenser().release(1.0);
 		factory.getWaterDispenser().release(1.0);
 		
+		if (drink == Drink.BLACK_SUGAR){
+			factory.getSugarDispenser().release(1.0);
+		}
+	
 		factory.getDisplay().info(Messages.RELEASING);
 		factory.getCupDispenser().release(1);
 		factory.getDrinkDispenser().release(1.0);
 		factory.getDisplay().info(Messages.TAKE_DRINK);
 		
-		factory.getDisplay().info(Messages.INSERT_COINS);	
-
-
-		
+		factory.getDisplay().info(Messages.INSERT_COINS);		
 	}
 
 }
