@@ -72,17 +72,21 @@ public class MyCoffeeMachine implements CoffeeMachine{
 
 	public void select(Drink drink) {
 		factory.getCupDispenser().contains(1);
-		factory.getWaterDispenser().contains(1.0);
-		factory.getCoffeePowderDispenser().contains(1.0);
-		
+		factory.getWaterDispenser().contains(anyDouble());
+		if(factory.getCoffeePowderDispenser().contains(anyDouble())){
+			factory.getDisplay().warn(Messages.OUT_OF_COFFEE_POWDER);
+			
+			for (int i = 0; i < this.moedas.size(); i++){
+				cb.release(this.moedas.get(i));
+			}
+			
+			factory.getDisplay().info(Messages.INSERT_COINS);
+		}
+				
 		if (drink == Drink.BLACK_SUGAR){
 			factory.getSugarDispenser().contains(1.0);
 		}
-			
-		factory.getDisplay().info(Messages.MIXING);
-		factory.getCoffeePowderDispenser().release(1.0);
-		factory.getWaterDispenser().release(1.0);
-		
+				
 		if (drink == Drink.BLACK_SUGAR){
 			factory.getSugarDispenser().release(1.0);
 		}
@@ -92,10 +96,17 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		factory.getDrinkDispenser().release(1.0);
 		factory.getDisplay().info(Messages.TAKE_DRINK);
 		
+		factory.getWaterDispenser().release(1.0);
+		factory.getDisplay().info(Messages.MIXING);
+		
+		factory.getCoffeePowderDispenser().release(1.0);
+		
+		
 		
 		this.moedas.clear();
 		
-		factory.getDisplay().info(Messages.INSERT_COINS);		
+		factory.getDisplay().info(Messages.INSERT_COINS);	
+		
 	}
 	
 
