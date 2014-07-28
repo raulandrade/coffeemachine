@@ -64,6 +64,9 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		for (int i = 0; i < this.moedas.size(); i++){
 			cb.release(this.moedas.get(i));
 		}
+		
+		this.moedas.clear();
+		
 		factory.getDisplay().info(Messages.INSERT_COINS);		
 	}
 
@@ -89,7 +92,11 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		factory.getDrinkDispenser().release(1.0);
 		factory.getDisplay().info(Messages.TAKE_DRINK);
 		
+		
+		this.moedas.clear();
+		
 		factory.getDisplay().info(Messages.INSERT_COINS);		
 	}
+	
 
 }
