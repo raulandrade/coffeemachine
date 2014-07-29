@@ -83,7 +83,13 @@ public class MyCoffeeMachine implements CoffeeMachine{
 	public void select(Drink drink) {
 		
 		this.factory.getCupDispenser().contains(1);
-		this.factory.getWaterDispenser().contains(1.0);
+		
+		if(!this.factory.getWaterDispenser().contains(1.0)){
+			this.factory.getDisplay().warn(Messages.OUT_OF_WATER);
+			retornaMoedas();
+			return;
+		}
+		
 		if(!this.factory.getCoffeePowderDispenser().contains(1.0)){
 			this.factory.getDisplay().warn(Messages.OUT_OF_COFFEE_POWDER);
 			retornaMoedas();
