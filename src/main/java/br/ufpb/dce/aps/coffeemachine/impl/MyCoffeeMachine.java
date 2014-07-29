@@ -21,7 +21,8 @@ public class MyCoffeeMachine implements CoffeeMachine{
  	public final ComponentsFactory factory;
  	public int valor =0, centavo, dolar ;
  	public CashBox cb;
- 	public ArrayList<Coin> moedas = new ArrayList<Coin>();
+ 	//public ArrayList<Coin> moedas = new ArrayList<Coin>();
+ 	public Coin[] moedas;
  	private Dispenser cupDispenser;
 	
 	public MyCoffeeMachine(ComponentsFactory factory){
@@ -29,16 +30,33 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		factory.getDisplay().info("Insert coins and select a drink!");
 		cupDispenser = factory.getCupDispenser();
 		cb = factory.getCashBox();
+		this.moedas = new Coin[50];
 	}
 
 	public void insertCoin(Coin coin) throws CoffeeMachineException{
-		if(coin == null){
-			throw new CoffeeMachineException("");
+		
+		if (coin == null) {
+			throw new CoffeeMachineException("Sem moedas!");
 		}
-		this.moedas.add(coin);
-		this.valor += coin.getValue();
-		this.factory.getDisplay().info("Total: US$ "+ getDolares(coin)+"."+ getCentavos(coin));
-	
+		this.moedas[++this.valor] = coin;
+		this.dolar += coin.getValue() / 100;
+		this.centavo += coin.getValue() % 100;
+		this.factory.getDisplay().info(
+				"Total: US$ " + this.dolar + "." + this.centavo);
+	}
+		
+		
+	private void retornaMoedas(){
+		Coin[] c = Coin.reverse();
+		for (int i = 0; i < c.length; i++) {
+			for (int j = 0; j < this.moedas.length; j++) {
+				if (c[i].equals(this.moedas[j])) {
+					this.factory.getCashBox().release(this.moedas[j]);
+					this.moedas[j] = null;
+				}
+			}
+		}
+		this.factory.getDisplay().info(Messages.INSERT_COINS);
 	}
 	
 	
@@ -54,58 +72,67 @@ public class MyCoffeeMachine implements CoffeeMachine{
 	}
 
 	public void cancel() throws CoffeeMachineException{
-		
-		if (centavo == 0  & dolar == 0){
-			throw new CoffeeMachineException("Sessão Cancelada");
+		if (this.dolar == 0 && this.centavo == 0) {
+			throw new CoffeeMachineException("Sessão cancelada!");
 		}
-		factory.getDisplay().warn(Messages.CANCEL);
-		
-		Collections.reverse(this.moedas);
-		for (int i = 0; i < this.moedas.size(); i++){
-			cb.release(this.moedas.get(i));
-		}
-		
-		this.moedas.clear();
-		
-		factory.getDisplay().info(Messages.INSERT_COINS);		
+		this.factory.getDisplay().warn(Messages.CANCEL);
+		this.retornaMoedas();
+			
 	}
 
 	public void select(Drink drink) {
-		factory.getCupDispenser().contains(1);
-		factory.getWaterDispenser().contains(anyDouble());
-		if(factory.getCoffeePowderDispenser().contains(anyDouble())){
-			factory.getDisplay().warn(Messages.OUT_OF_COFFEE_POWDER);
-			
-			for (int i = 0; i < this.moedas.size(); i++){
-				cb.release(this.moedas.get(i));
-			}
-			
-			factory.getDisplay().info(Messages.INSERT_COINS);
+		
+		this.factory.getCupDispenser().contains(1);
+		this.factory.getWaterDispenser().contains(1.0);
+		if(!this.factory.getCoffeePowderDispenser().contains(1.0)){
+			this.factory.getDisplay().warn(Messages.OUT_OF_COFFEE_POWDER);
+			this.retornaMoedas();
+			return;
 		}
-				
-		if (drink == Drink.BLACK_SUGAR){
-			factory.getSugarDispenser().contains(1.0);
+		if (drink.equals(Drink.BLACK_SUGAR)) {
+			this.factory.getSugarDispenser().contains(2.0);
 		}
-				
-		if (drink == Drink.BLACK_SUGAR){
-			factory.getSugarDispenser().release(1.0);
+		this.factory.getDisplay().info(Messages.MIXING);
+		this.factory.getCoffeePowderDispenser().release(1.2);
+		this.factory.getWaterDispenser().release(1.2);
+		if (drink.equals(Drink.BLACK_SUGAR)) {
+			this.factory.getSugarDispenser().release(1.2);
 		}
+
+		this.factory.getDisplay().info(Messages.RELEASING);
+		this.factory.getCupDispenser().release(1);
+		this.factory.getDrinkDispenser().release(1.2);
+		this.factory.getDisplay().info(Messages.TAKE_DRINK);
+		for(int i = 0; i < this.moedas.length; i++){
+			this.moedas[i] = null;
+		}
+		this.factory.getDisplay().info(Messages.INSERT_COINS);
+		
+		
 	
-		factory.getDisplay().info(Messages.RELEASING);
-		factory.getCupDispenser().release(1);
-		factory.getDrinkDispenser().release(1.0);
-		factory.getDisplay().info(Messages.TAKE_DRINK);
-		
-		factory.getWaterDispenser().release(1.0);
-		factory.getDisplay().info(Messages.MIXING);
-		
-		factory.getCoffeePowderDispenser().release(1.0);
-		
-		
-		
-		this.moedas.clear();
-		
-		factory.getDisplay().info(Messages.INSERT_COINS);	
+//		if (drink == Drink.BLACK_SUGAR){
+//			factory.getSugarDispenser().contains(1.0);
+//		}
+//				
+//		if (drink == Drink.BLACK_SUGAR){
+//			factory.getSugarDispenser().release(1.0);
+//		}
+//	
+//		factory.getDisplay().info(Messages.RELEASING);
+//		factory.getCupDispenser().release(1);
+//		factory.getDrinkDispenser().release(1.0);
+//		factory.getDisplay().info(Messages.TAKE_DRINK);
+//		
+//		factory.getWaterDispenser().release(1.0);
+//		factory.getDisplay().info(Messages.MIXING);
+//		
+//		factory.getCoffeePowderDispenser().release(1.0);
+//		
+//		
+//		
+//		this.moedas.clear();
+//		
+//		factory.getDisplay().info(Messages.INSERT_COINS);	
 		
 	}
 	
