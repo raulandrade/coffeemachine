@@ -76,7 +76,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			throw new CoffeeMachineException("Sessão cancelada!");
 		}
 		this.factory.getDisplay().warn(Messages.CANCEL);
-		this.retornaMoedas();
+		retornaMoedas();
 			
 	}
 
@@ -86,53 +86,32 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		this.factory.getWaterDispenser().contains(1.0);
 		if(!this.factory.getCoffeePowderDispenser().contains(1.0)){
 			this.factory.getDisplay().warn(Messages.OUT_OF_COFFEE_POWDER);
-			this.retornaMoedas();
+			retornaMoedas();
 			return;
 		}
 		if (drink.equals(Drink.BLACK_SUGAR)) {
-			this.factory.getSugarDispenser().contains(2.0);
+			if(!this.factory.getSugarDispenser().contains(1.0)){
+				this.factory.getDisplay().warn(Messages.OUT_OF_SUGAR);
+				retornaMoedas();
+				return;
+			}
+	
 		}
 		this.factory.getDisplay().info(Messages.MIXING);
-		this.factory.getCoffeePowderDispenser().release(1.2);
-		this.factory.getWaterDispenser().release(1.2);
+		this.factory.getCoffeePowderDispenser().release(1.0);
+		this.factory.getWaterDispenser().release(1.0);
 		if (drink.equals(Drink.BLACK_SUGAR)) {
-			this.factory.getSugarDispenser().release(1.2);
+			this.factory.getSugarDispenser().release(1.0);
 		}
 
 		this.factory.getDisplay().info(Messages.RELEASING);
 		this.factory.getCupDispenser().release(1);
-		this.factory.getDrinkDispenser().release(1.2);
+		this.factory.getDrinkDispenser().release(1.0);
 		this.factory.getDisplay().info(Messages.TAKE_DRINK);
 		for(int i = 0; i < this.moedas.length; i++){
-			this.moedas[i] = null;
+			moedas[i] = null;
 		}
 		this.factory.getDisplay().info(Messages.INSERT_COINS);
-		
-		
-	
-//		if (drink == Drink.BLACK_SUGAR){
-//			factory.getSugarDispenser().contains(1.0);
-//		}
-//				
-//		if (drink == Drink.BLACK_SUGAR){
-//			factory.getSugarDispenser().release(1.0);
-//		}
-//	
-//		factory.getDisplay().info(Messages.RELEASING);
-//		factory.getCupDispenser().release(1);
-//		factory.getDrinkDispenser().release(1.0);
-//		factory.getDisplay().info(Messages.TAKE_DRINK);
-//		
-//		factory.getWaterDispenser().release(1.0);
-//		factory.getDisplay().info(Messages.MIXING);
-//		
-//		factory.getCoffeePowderDispenser().release(1.0);
-//		
-//		
-//		
-//		this.moedas.clear();
-//		
-//		factory.getDisplay().info(Messages.INSERT_COINS);	
 		
 	}
 	
