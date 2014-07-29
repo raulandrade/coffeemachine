@@ -44,7 +44,12 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		this.factory.getDisplay().info(
 				"Total: US$ " + this.dolar + "." + this.centavo);
 	}
-		
+	
+	private void esvaziaLista(){
+		for (int j = 0; j < this.moedas.length; j++) {
+			this.moedas[j] = null;
+		}
+	}
 		
 	private void retornaMoedas(){
 		Coin[] c = Coin.reverse();
@@ -56,6 +61,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 				}
 			}
 		}
+		esvaziaLista();
 		this.factory.getDisplay().info(Messages.INSERT_COINS);
 	}
 	
@@ -107,13 +113,21 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			}
 	
 		}
+		if (drink == Drink.WHITE) {
+			this.factory.getCreamerDispenser().contains(1.2);
+		}
 		this.factory.getDisplay().info(Messages.MIXING);
 		this.factory.getCoffeePowderDispenser().release(1.0);
 		this.factory.getWaterDispenser().release(1.0);
-		if (drink.equals(Drink.BLACK_SUGAR)) {
+		
+		if (drink == Drink.BLACK_SUGAR) {
 			this.factory.getSugarDispenser().release(1.0);
 		}
 
+		if (drink == Drink.WHITE) {
+			this.factory.getCreamerDispenser().release(1.2);
+		}
+		
 		this.factory.getDisplay().info(Messages.RELEASING);
 		this.factory.getCupDispenser().release(1);
 		this.factory.getDrinkDispenser().release(1.0);
@@ -121,6 +135,7 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		for(int i = 0; i < this.moedas.length; i++){
 			moedas[i] = null;
 		}
+		esvaziaLista();
 		this.factory.getDisplay().info(Messages.INSERT_COINS);
 		
 	}
