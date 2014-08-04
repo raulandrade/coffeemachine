@@ -18,12 +18,13 @@ import br.ufpb.dce.aps.coffeemachine.Drink;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class MyCoffeeMachine implements CoffeeMachine{
- 	public final ComponentsFactory factory;
- 	public int valor =0, centavo, dolar ;
- 	public CashBox cb;
+ 	private final ComponentsFactory factory;
+ 	private int valor =0, centavo, dolar ;
+ 	private CashBox cb;
  	//public ArrayList<Coin> moedas = new ArrayList<Coin>();
  	public Coin[] moedas;
  	private Dispenser cupDispenser;
+ 	private final int valorDoCafe = 35;
 	
 	public MyCoffeeMachine(ComponentsFactory factory){
 		this.factory = factory;
@@ -33,6 +34,18 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		this.moedas = new Coin[50];
 	}
 
+	public int valorDoTroco(){
+		int contMoedas = 0;
+		for(Coin c : Coin.reverse()){
+			for(Coin auxiliar : this.moedas){
+				if(auxiliar == c){
+					contMoedas += auxiliar.getValue();
+				}
+			}
+		}
+		return contMoedas - this.valorDoCafe;
+	}
+	
 	public void insertCoin(Coin coin) throws CoffeeMachineException{
 		
 		if (coin == null) {
@@ -51,6 +64,8 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		}
 	}
 		
+
+	
 	private void retornaMoedas(){
 		Coin[] c = Coin.reverse();
 		for (int i = 0; i < c.length; i++) {
@@ -85,9 +100,33 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		retornaMoedas();
 			
 	}
+	
+	private ArrayList <Coin> releaseCoin(int valor){
+		ArrayList<Coin> listaAux = new ArrayList<Coin>();
+		for (int i = 0; i < Coin.reverse().length; i++){
+			while (Coin.reverse()[i].getValue() <= valor){
+				cb.release(Coin.reverse()[i]);
+				valor = valor - Coin.reverse()[i].getValue();
+			}
+		}
+		return listaAux;
+	}
+	
+	
+	private ArrayList <Coin> reverseCoin(int valor){
+		ArrayList<Coin> listaAux = new ArrayList<Coin>();
+		for (int i = 0; i < Coin.reverse().length; i++){
+			while (Coin.reverse()[i].getValue() <= valor){
+				cb.count(Coin.reverse()[i]);
+				listaAux.add(Coin.reverse()[i]);
+				valor = valor - Coin.reverse()[i].getValue();
+			}
+		}
+		return listaAux;
+	}
 
 	public void select(Drink drink) {
-		
+			
 		if(!this.factory.getCupDispenser().contains(1)){
 			this.factory.getDisplay().warn(Messages.OUT_OF_CUP);
 			retornaMoedas();
@@ -105,6 +144,17 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			retornaMoedas();
 			return;
 		}
+		
+		if (drink == Drink.WHITE) {
+			this.factory.getCreamerDispenser().contains(1.0);
+			}
+		
+		if (drink == Drink.WHITE_SUGAR) {
+			this.factory.getCreamerDispenser().contains(1.0);
+			this.factory.getSugarDispenser().contains(2.0);
+
+			}
+		
 		if (drink.equals(Drink.BLACK_SUGAR)) {
 			if(!this.factory.getSugarDispenser().contains(1.0)){
 				this.factory.getDisplay().warn(Messages.OUT_OF_SUGAR);
@@ -113,9 +163,11 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			}
 	
 		}
-		if (drink == Drink.WHITE) {
-			this.factory.getCreamerDispenser().contains(1.2);
-		}
+		
+		reverseCoin(valorDoTroco());///Se ligue!!!
+		
+		////////////////
+		
 		this.factory.getDisplay().info(Messages.MIXING);
 		this.factory.getCoffeePowderDispenser().release(1.0);
 		this.factory.getWaterDispenser().release(1.0);
@@ -123,20 +175,28 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		if (drink == Drink.BLACK_SUGAR) {
 			this.factory.getSugarDispenser().release(1.0);
 		}
-
+		
 		if (drink == Drink.WHITE) {
-			this.factory.getCreamerDispenser().release(1.2);
+			this.factory.getCreamerDispenser().release(1.0);
+		}
+		
+		if (drink == Drink.WHITE_SUGAR) {
+			this.factory.getCreamerDispenser().release(1.0);
+			this.factory.getSugarDispenser().release(1.0);
 		}
 		
 		this.factory.getDisplay().info(Messages.RELEASING);
 		this.factory.getCupDispenser().release(1);
 		this.factory.getDrinkDispenser().release(1.0);
 		this.factory.getDisplay().info(Messages.TAKE_DRINK);
-		for(int i = 0; i < this.moedas.length; i++){
-			moedas[i] = null;
-		}
+		
+		
+		releaseCoin(valorDoTroco());
+		
 		esvaziaLista();
+		
 		this.factory.getDisplay().info(Messages.INSERT_COINS);
+
 		
 	}
 	
