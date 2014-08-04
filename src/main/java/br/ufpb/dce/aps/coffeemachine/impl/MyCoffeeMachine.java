@@ -127,6 +127,12 @@ public class MyCoffeeMachine implements CoffeeMachine{
 
 	public void select(Drink drink) {
 			
+		if(valorDoTroco()< 0){
+			this.factory.getDisplay().warn(Messages.NO_ENOUGHT_MONEY);
+			retornaMoedas();	
+			return;
+			}
+		
 		if(!this.factory.getCupDispenser().contains(1)){
 			this.factory.getDisplay().warn(Messages.OUT_OF_CUP);
 			retornaMoedas();
@@ -163,10 +169,8 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			}
 	
 		}
-		
 		reverseCoin(valorDoTroco());///Se ligue!!!
 		
-		////////////////
 		
 		this.factory.getDisplay().info(Messages.MIXING);
 		this.factory.getCoffeePowderDispenser().release(1.0);
