@@ -1,13 +1,6 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
-import static org.mockito.Matchers.anyDouble;
-import static org.mockito.Mockito.verify;
-
 import java.util.ArrayList;
-import java.util.Collections;
-
-import org.mockito.InOrder;
-
 import br.ufpb.dce.aps.coffeemachine.CashBox;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachineException;
@@ -21,7 +14,6 @@ public class MyCoffeeMachine implements CoffeeMachine{
  	private final ComponentsFactory factory;
  	private int valor =0, centavo, dolar ;
  	private CashBox cb;
- 	//public ArrayList<Coin> moedas = new ArrayList<Coin>();
  	public Coin[] moedas;
  	private Dispenser cupDispenser;
  	private final int valorDoCafe = 35;
@@ -33,53 +25,18 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		cb = factory.getCashBox();
 		this.moedas = new Coin[50];
 	}
-
-	public int valorDoTroco(){
-		int contMoedas = 0;
-		for(Coin c : Coin.reverse()){
-			for(Coin auxiliar : this.moedas){
-				if(auxiliar == c){
-					contMoedas += auxiliar.getValue();
-				}
-			}
-		}
-		return contMoedas - this.valorDoCafe;
-	}
 	
 	public void insertCoin(Coin coin) throws CoffeeMachineException{
-		
-		if (coin == null) {
-			throw new CoffeeMachineException("Sem moedas!");
-		}
-		this.moedas[++this.valor] = coin;
-		this.dolar += coin.getValue() / 100;
-		this.centavo += coin.getValue() % 100;
-		this.factory.getDisplay().info(
-				"Total: US$ " + this.dolar + "." + this.centavo);
-	}
-	
-	private void esvaziaLista(){
-		for (int j = 0; j < this.moedas.length; j++) {
-			this.moedas[j] = null;
-		}
-	}
-		
-
-	
-	private void retornaMoedas(){
-		Coin[] c = Coin.reverse();
-		for (int i = 0; i < c.length; i++) {
-			for (int j = 0; j < this.moedas.length; j++) {
-				if (c[i].equals(this.moedas[j])) {
-					this.factory.getCashBox().release(this.moedas[j]);
-					this.moedas[j] = null;
-				}
+			
+			if (coin == null) {
+				throw new CoffeeMachineException("Sem moedas!");
 			}
-		}
-		esvaziaLista();
-		this.factory.getDisplay().info(Messages.INSERT_COINS);
+			this.moedas[++this.valor] = coin;
+			this.dolar += coin.getValue() / 100;
+			this.centavo += coin.getValue() % 100;
+			this.factory.getDisplay().info(
+					"Total: US$ " + this.dolar + "." + this.centavo);
 	}
-	
 	
 	public int getCentavos(Coin coin){
 		this.centavo += coin.getValue();
@@ -101,6 +58,38 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			
 	}
 	
+	public int valorDoTroco(){
+		int contMoedas = 0;
+		for(Coin c : Coin.reverse()){
+			for(Coin auxiliar : this.moedas){
+				if(auxiliar == c){
+					contMoedas += auxiliar.getValue();
+				}
+			}
+		}
+		return contMoedas - this.valorDoCafe;
+	}
+	
+	private void esvaziaLista(){
+		for (int j = 0; j < this.moedas.length; j++) {
+			this.moedas[j] = null;
+		}
+	}
+	
+	private void retornaMoedas(){
+		ArrayList<Coin> listaAux = new ArrayList<Coin>();
+		for (int i = 0; i < Coin.reverse().length; i++) {
+			for (int j = 0; j < this.moedas.length; j++) {
+				if (Coin.reverse()[i].equals(this.moedas[j])) {
+					this.cb.release(this.moedas[j]);
+					this.moedas[j] = null;
+				}
+			}
+		}
+		esvaziaLista();
+		this.factory.getDisplay().info(Messages.INSERT_COINS);
+	}
+	
 	private ArrayList <Coin> releaseCoin(int valor){
 		ArrayList<Coin> listaAux = new ArrayList<Coin>();
 		for (int i = 0; i < Coin.reverse().length; i++){
@@ -111,20 +100,16 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		}
 		return listaAux;
 	}
-	
-	
-	private ArrayList <Coin> reverseCoin(int valor){
-		ArrayList<Coin> listaAux = new ArrayList<Coin>();
-		for (int i = 0; i < Coin.reverse().length; i++){
-			while (Coin.reverse()[i].getValue() <= valor){
-				cb.count(Coin.reverse()[i]);
-				listaAux.add(Coin.reverse()[i]);
-				valor = valor - Coin.reverse()[i].getValue();
+	boolean planCoins(int troco) {
+		Coin[] inverso = Coin.reverse();
+		for (Coin c : inverso) {
+			if (c.getValue() <= troco && cb.count(c) > 0) {
+				troco -= c.getValue();
 			}
 		}
-		return listaAux;
+		return troco == 0;
 	}
-
+	
 	public void select(Drink drink) {
 			
 		if(valorDoTroco()< 0){
@@ -169,9 +154,13 @@ public class MyCoffeeMachine implements CoffeeMachine{
 			}
 	
 		}
-		reverseCoin(valorDoTroco());///Se ligue!!!
 		
-		
+		if(!planCoins(valorDoTroco())){
+			factory.getDisplay().warn(Messages.NO_ENOUGHT_CHANGE); 
+			retornaMoedas();
+			return;
+			}
+	
 		this.factory.getDisplay().info(Messages.MIXING);
 		this.factory.getCoffeePowderDispenser().release(1.0);
 		this.factory.getWaterDispenser().release(1.0);
@@ -194,14 +183,10 @@ public class MyCoffeeMachine implements CoffeeMachine{
 		this.factory.getDrinkDispenser().release(1.0);
 		this.factory.getDisplay().info(Messages.TAKE_DRINK);
 		
-		
 		releaseCoin(valorDoTroco());
-		
 		esvaziaLista();
-		
 		this.factory.getDisplay().info(Messages.INSERT_COINS);
 
-		
 	}
 	
 
