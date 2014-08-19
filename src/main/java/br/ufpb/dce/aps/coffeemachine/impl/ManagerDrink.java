@@ -41,7 +41,7 @@ public class ManagerDrink {
 	public boolean checksSugar(ComponentsFactory factory) {
 
 		if (this.coffeeService.getDrink() == Drink.BLACK_SUGAR || this.coffeeService.getDrink() == Drink.WHITE_SUGAR) {
-			if (!factory.getSugarDispenser().contains(200)) {
+			if (!factory.getSugarDispenser().contains(5)) {
 				factory.getDisplay().warn(Messages.OUT_OF_SUGAR);
 				return false;
 			}

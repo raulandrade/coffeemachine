@@ -16,7 +16,7 @@ public class BlackCoffee extends CoffeeService{
 	
 	public void release() {
 		if (drink == drink.BLACK_SUGAR)
-			this.factory.getSugarDispenser().release(1);
+			this.factory.getSugarDispenser().release(5);
 	}
 
 }
