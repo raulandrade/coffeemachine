@@ -8,11 +8,10 @@ public class ManagerCoffeeMachine {
 
 	private ManagerDrink mDrink = new ManagerDrink();
 
-	public void iniciarPedidoDeBebida(ComponentsFactory factory, ManagerCoins mCoins, Drink drink) {
-
+	public void startDrink(ComponentsFactory factory, ManagerCoins mCoins, Drink drink) {
+		
 		this.mDrink.makeDrink(factory, drink);
-		if (!mCoins.checkCoin(factory,
-				this.mDrink.getValueCoffee())) {
+		if (!mCoins.checkCoin(factory, this.mDrink.getValueCoffee())) {
 			return;
 		}if (!this.mDrink.ingredientsDrink(factory,drink)) {
 			mCoins.ReleaseCoins(factory, false);
@@ -31,7 +30,8 @@ public class ManagerCoffeeMachine {
 		if (mCoins.getTotalCoins()% this.mDrink.getValueCoffee() != 0	&& mCoins.getTotalCoins() > this.mDrink.getValueCoffee()) {
 			mCoins.changeReleases(factory, this.mDrink.getValueCoffee());
 		}
-
+	
+	
 		this.menssageInsert(factory);
 		mCoins.emptyBoxCoins();
 	}

@@ -36,67 +36,70 @@ public class ManagerCoins {
 	
 	public void changeReleases(ComponentsFactory factory, double valorDaBebida) {
 		this.reverseCoins = Coin.reverse();
-		for (Coin moeda : this.reverseCoins) {
-			for (Coin moedaDeTroco : this.auxBox) {
-				if (moedaDeTroco == moeda) {
-					factory.getCashBox().release(moeda);
+		for (Coin c : this.reverseCoins) {
+			for (Coin cC : this.auxBox) {
+				if (cC == c) {
+					factory.getCashBox().release(c);
 				}
 			}
 		}
 	}
-
+	
 	public void emptyBoxCoins() {
 		this.boxCoins.clear();
 	}
 	
 	
-	public boolean planCoins(ComponentsFactory factory,
-			double valorDaBebida) {
-		double troco = this.totalCoins - valorDaBebida;
+	public boolean planCoins(ComponentsFactory factory,	double valueDrink) {
+		double change = this.totalCoins - valueDrink;
 		this.reverseCoins = Coin.reverse();
-		for (Coin moeda : this.reverseCoins) {
-			if (moeda.getValue() <= troco && factory.getCashBox().count(moeda) > 0) {
-				while (moeda.getValue() <= troco) {
-					troco = troco - moeda.getValue();
-					this.auxBox.add(moeda);
+		for (Coin c : this.reverseCoins) {
+			if(c.getValue() <= change && factory.getCashBox().count(c) >0){
+				while (c.getValue() <= change) {
+					change = change - c.getValue();
+					this.auxBox.add(c);
 				}
 			}
 		}
-		return (troco == 0);
+		return (change == 0);
 	}
 
 	
-	public boolean checkCoin(ComponentsFactory factory,
-			double valorDaBebida) {
-		if (this.totalCoins < valorDaBebida || this.totalCoins == 0) {
+	public boolean checkCoin(ComponentsFactory factory,	double ValueDrink) {
+		if (this.totalCoins < ValueDrink || this.totalCoins == 0) {
 			factory.getDisplay().warn(Messages.NO_ENOUGHT_MONEY);
 			this.ReleaseCoins(factory, false);
 			return false;
 		}
 		return true;
 	}
+	
 
 
-	public boolean giveEnoughCoins(ComponentsFactory factory,
-			double valorDaBebida) {
-		if (this.totalCoins % valorDaBebida != 0 && this.totalCoins > valorDaBebida) {
-			if (!this.planCoins(factory, valorDaBebida)) {
+
+	public boolean giveEnoughCoins(ComponentsFactory factory,double valueDrink) {
+		if (this.totalCoins % valueDrink != 0 && this.totalCoins > valueDrink) {
+			if(!this.planCoins(factory, valueDrink)){
 				factory.getDisplay().warn(Messages.NO_ENOUGHT_CHANGE);
-				this.ReleaseCoins(factory, false);
+				ReleaseCoins(factory, false);
 				return false;
 			}
 		}
 		return true;
-	}
 
+	}
 	
-	public void ReleaseCoins(ComponentsFactory factory, Boolean confirmacao) {
-		if (confirmacao) {
+	
+	
+	
+	
+	public void ReleaseCoins(ComponentsFactory factory, Boolean confirmation) {
+		if (confirmation) {
 			factory.getDisplay().warn(Messages.CANCEL);
 		}
-		for (Coin re : this.reverseCoins) {
+		for (Coin r : this.reverseCoins) {
 			for (Coin aux : this.boxCoins) {
-				if (aux == re) {
+				if (aux == r) {
 					factory.getCashBox().release(aux);
 				}
 			}

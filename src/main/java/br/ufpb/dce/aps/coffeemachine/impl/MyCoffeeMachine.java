@@ -26,6 +26,6 @@ public class MyCoffeeMachine implements CoffeeMachine {
 	}
 	
 	public void select(Drink drink) {		
-		this.gerenteDeMaquina.iniciarPedidoDeBebida(this.factory, this.gerenteFinanceiro, drink);
+		this.gerenteDeMaquina.startDrink(this.factory, this.gerenteFinanceiro, drink);
 	}
 }
