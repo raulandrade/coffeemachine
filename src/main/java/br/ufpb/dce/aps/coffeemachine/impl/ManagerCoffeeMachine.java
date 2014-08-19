@@ -38,7 +38,7 @@ public class ManagerCoffeeMachine {
 		this.messageInsertCoins(factory);
 		managerCoins.emptyBoxCoins();
 	}
-	
+
 	public void messageInsertCoins(ComponentsFactory factory){
 		factory.getDisplay().info(Messages.INSERT_COINS);
 	}

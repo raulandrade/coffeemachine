@@ -17,6 +17,7 @@ public class ManagerDrink {
 		}
 	}
 
+	
 	public boolean ingredientsDrink(ComponentsFactory factory) {
 		if (!factory.getCupDispenser().contains(1)) {
 			factory.getDisplay().warn(Messages.OUT_OF_CUP);
@@ -29,12 +30,14 @@ public class ManagerDrink {
 			return false;
 		} else if (this.coffeeService.getDrink() == Drink.WHITE	|| this.coffeeService.getDrink() == Drink.WHITE_SUGAR) {
 			if (!factory.getCreamerDispenser().contains(1)) {
+				factory.getDisplay().warn(Messages.OUT_OF_CREAMER);
 				return false;
 			}
 		}
 		return true;
 	}
-
+	
+	
 	public boolean checksSugar(ComponentsFactory factory) {
 
 		if (this.coffeeService.getDrink() == Drink.BLACK_SUGAR || this.coffeeService.getDrink() == Drink.WHITE_SUGAR) {
@@ -45,7 +48,6 @@ public class ManagerDrink {
 		}
 		return true;
 	}
-	
 
 	public void mixingDrink(ComponentsFactory factory) {
 		factory.getDisplay().info(Messages.MIXING);
