@@ -16,7 +16,7 @@ public class ManagerCoffeeMachine {
 		
 		this.managerDrink.makeDrink(drink, factory);
 
-		if (!this.managerDrink.ingredientsDrink(factory)) {
+		if (!this.managerDrink.ingredientsDrink(drink, factory)) {
 			managerCoins.ReleaseCoins(factory, false);
 			return;
 		} if (!this.managerDrink.checksSugar(factory)) {
