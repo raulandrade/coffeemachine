@@ -8,14 +8,14 @@ import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerCoins {
-	
+
 	private int totalCoins;
+
 	private Coin[] reverseCoins = Coin.reverse();
 	private ArrayList<Coin> boxCoins = new ArrayList<Coin>();
-	private ArrayList<Coin> boxChange = new ArrayList<Coin>();
+	private ArrayList<Coin> auxBox = new ArrayList<Coin>();
 
-
-	//Insere moedas
+	//Insere moedas (inserirMoeda) OK
 	public void insertCoins(Coin coin, ComponentsFactory factory) throws CoffeeMachineException {
 		if(coin == null){
 			throw new CoffeeMachineException("");
@@ -24,52 +24,51 @@ public class ManagerCoins {
 		this.boxCoins.add(coin);
 		factory.getDisplay().info("Total: US$ " + this.totalCoins / 100 + "." + this.totalCoins % 100);
 	}
-
-	//Cancela
+	
+	//Cancela (CAncelar) 
 	public void cancel(ComponentsFactory factory) throws CoffeeMachineException {	
 		if (this.totalCoins == 0) {
 			throw new CoffeeMachineException("");
 		}
 		this.ReleaseCoins(factory, true);
+		}
 
-	}
-
-	//Entrega o troco
-	public void changeReleases(double valorDaBebida, ComponentsFactory factory) {
+	
+	public void changeReleases(ComponentsFactory factory, double valorDaBebida) {
 		this.reverseCoins = Coin.reverse();
-		for (Coin c : this.reverseCoins) {
-			for (Coin cc : this.boxChange) {
-				if (cc == c) {
-					factory.getCashBox().release(c);
+		for (Coin moeda : this.reverseCoins) {
+			for (Coin moedaDeTroco : this.auxBox) {
+				if (moedaDeTroco == moeda) {
+					factory.getCashBox().release(moeda);
 				}
 			}
 		}
 	}
 
-	
-	//Esvazia a caixa de moedas
 	public void emptyBoxCoins() {
 		this.boxCoins.clear();
 	}
 	
-	//Libera moedas
-	public boolean planCoins(double change, ComponentsFactory factory) {
-		double vChange = this.totalCoins - change;
+	
+	public boolean planCoins(ComponentsFactory factory,
+			double valorDaBebida) {
+		double troco = this.totalCoins - valorDaBebida;
 		this.reverseCoins = Coin.reverse();
-		for (Coin c : this.reverseCoins) {
-			if (c.getValue() <= vChange && factory.getCashBox().count(c) > 0) {
-				while (c.getValue() <= vChange) {
-					vChange = vChange - c.getValue();
-					this.boxChange.add(c);
+		for (Coin moeda : this.reverseCoins) {
+			if (moeda.getValue() <= troco && factory.getCashBox().count(moeda) > 0) {
+				while (moeda.getValue() <= troco) {
+					troco = troco - moeda.getValue();
+					this.auxBox.add(moeda);
 				}
 			}
 		}
-		return (vChange == 0);
+		return (troco == 0);
 	}
 
-	//Checa moedas inseridas
-	public boolean checkCoin(double valueDrink, ComponentsFactory factory) {
-		if (this.totalCoins < valueDrink || this.totalCoins == 0) {
+	
+	public boolean checkCoin(ComponentsFactory factory,
+			double valorDaBebida) {
+		if (this.totalCoins < valorDaBebida || this.totalCoins == 0) {
 			factory.getDisplay().warn(Messages.NO_ENOUGHT_MONEY);
 			this.ReleaseCoins(factory, false);
 			return false;
@@ -77,10 +76,11 @@ public class ManagerCoins {
 		return true;
 	}
 
-	//Verifica se possui moedas suficientes para troco
-	public boolean giveEnoughCoins(ComponentsFactory factory, double valueDrink) {
-		if (this.totalCoins % valueDrink != 0 && this.totalCoins > valueDrink) {
-			if (!(this.planCoins(valueDrink, factory))) {
+
+	public boolean giveEnoughCoins(ComponentsFactory factory,
+			double valorDaBebida) {
+		if (this.totalCoins % valorDaBebida != 0 && this.totalCoins > valorDaBebida) {
+			if (!this.planCoins(factory, valorDaBebida)) {
 				factory.getDisplay().warn(Messages.NO_ENOUGHT_CHANGE);
 				this.ReleaseCoins(factory, false);
 				return false;
@@ -88,18 +88,15 @@ public class ManagerCoins {
 		}
 		return true;
 	}
-	
 
 	
-	
-	// Libera as moedas
-	public void ReleaseCoins(ComponentsFactory factory, Boolean condition) {
-		if (condition) {
+	public void ReleaseCoins(ComponentsFactory factory, Boolean confirmacao) {
+		if (confirmacao) {
 			factory.getDisplay().warn(Messages.CANCEL);
 		}
-		for (Coin r : this.reverseCoins) {
+		for (Coin re : this.reverseCoins) {
 			for (Coin aux : this.boxCoins) {
-				if (aux == r) {
+				if (aux == re) {
 					factory.getCashBox().release(aux);
 				}
 			}
@@ -108,9 +105,6 @@ public class ManagerCoins {
 		this.emptyBoxCoins();
 		factory.getDisplay().info(Messages.INSERT_COINS);
 	}
-	
-
-	//Retorna o total de moedas
 	public int getTotalCoins() {
 		return totalCoins;
 	}

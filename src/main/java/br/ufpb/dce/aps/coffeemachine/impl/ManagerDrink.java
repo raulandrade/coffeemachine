@@ -6,49 +6,33 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerDrink {
 
-	private CoffeeService coffeeService;
-	private static int valueCoffee = 35;
+	private ServiceDrink sDrink;
+	private int valueDrink = 35, valueBouillon = 25;
 
-	public void makeDrink(Drink drink, ComponentsFactory factory) {
-		if (drink == drink.BLACK || drink == drink.BLACK_SUGAR) {
-			this.coffeeService = new BlackCoffee(drink, factory);
+	public void makeDrink(ComponentsFactory factory, Drink drink) {
+		
+		if (drink == drink.WHITE || drink == drink.WHITE_SUGAR) {
+			this.sDrink = new White(drink);
+		}else if (drink == drink.BLACK || drink == drink.BLACK_SUGAR) {
+			this.sDrink = new BlackDrink(drink);
 		} else {
-			this.coffeeService = new WhiteDrink(drink, factory);
+			this.sDrink = new BouillonDrink(drink);
+			this.valueDrink = valueBouillon;
 		}
 	}
 
-	
-	public boolean ingredientsDrink(Drink drink, ComponentsFactory factory) {
-		if (!factory.getCupDispenser().contains(1)) {
-			factory.getDisplay().warn(Messages.OUT_OF_CUP);
-			return false;
-		}if(drink == drink.BLACK || drink == drink.BLACK_SUGAR){
-			if (!factory.getWaterDispenser().contains(100)) { 
-				factory.getDisplay().warn(Messages.OUT_OF_WATER);
-				return false;
-			}
-		}else{
-			if(!factory.getWaterDispenser().contains(80)) {
-				factory.getDisplay().warn(Messages.OUT_OF_WATER);
-				return false;
-			}			
-		} if (!factory.getCoffeePowderDispenser().contains(15)) {
-			factory.getDisplay().warn(Messages.OUT_OF_COFFEE_POWDER);
-			return false;
-		}  else if (this.coffeeService.getDrink() == Drink.WHITE || this.coffeeService.getDrink() == Drink.WHITE_SUGAR) {
-			if (!factory.getCreamerDispenser().contains(20)) {
-				factory.getDisplay().warn(Messages.OUT_OF_CREAMER);
-				return false;
-			}
+	public boolean ingredientsDrink(ComponentsFactory factory, Drink drink) {
+		if (this.sDrink.getDrink() == drink.BLACK || this.sDrink.getDrink() == Drink.BLACK_SUGAR) {
+			return (this.checkIngredients(factory, drink, 1, 100, 15, 0, 0));
+		} else if (this.sDrink.getDrink() == drink.WHITE || this.sDrink.getDrink() == drink.WHITE_SUGAR) {
+			return (this.checkIngredients(factory, drink, 1, 80, 15, 20, 0));
+		} else {
+			return (this.checkIngredients(factory, drink, 1, 100, 0, 0, 10));
 		}
-		return true;
 	}
 
-	
-	
 	public boolean checksSugar(ComponentsFactory factory) {
-
-		if (this.coffeeService.getDrink() == Drink.BLACK_SUGAR || this.coffeeService.getDrink() == Drink.WHITE_SUGAR) {
+		if (this.sDrink.getDrink() == Drink.BLACK_SUGAR	|| this.sDrink.getDrink() == Drink.WHITE_SUGAR) {
 			if (!factory.getSugarDispenser().contains(5)) {
 				factory.getDisplay().warn(Messages.OUT_OF_SUGAR);
 				return false;
@@ -56,21 +40,55 @@ public class ManagerDrink {
 		}
 		return true;
 	}
+	
+	public boolean checkIngredients(ComponentsFactory factory, Drink drink,
+			int copo, int a, int p, int c, int pS) {
+		if (copo > 0) {
+			if (!factory.getCupDispenser().contains(copo)) {
+				factory.getDisplay().warn(Messages.OUT_OF_CUP);
+				return false;
+			}
+		}if (!factory.getWaterDispenser().contains(a)) {
+			factory.getDisplay().warn(Messages.OUT_OF_WATER);
+			return false;
+		}if (p > 0) {
+			if (!factory.getCoffeePowderDispenser().contains(p)) {
+				factory.getDisplay().warn(Messages.OUT_OF_COFFEE_POWDER);
+				return false;
+			}
+		}if (this.sDrink.getDrink() == Drink.WHITE
+				|| this.sDrink.getDrink() == Drink.WHITE_SUGAR) {
+			if (!factory.getCreamerDispenser().contains(c)) {
+				factory.getDisplay().warn(Messages.OUT_OF_CREAMER);
+				return false;
+			}
+		}if (pS > 0) {
+			if (!factory.getBouillonDispenser().contains(pS)) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-	public void mixingDrink(ComponentsFactory factory) {
+	public void mixingDrink(ComponentsFactory factory, Drink drink) {
 		factory.getDisplay().info(Messages.MIXING);
-		factory.getCoffeePowderDispenser().release(15);
+		if (this.sDrink.getDrink() == drink.BOUILLON) {
+			factory.getBouillonDispenser().release(10);
+		} 
+		else {
+			factory.getCoffeePowderDispenser().release(15);
+		}
+
 	}
 
 	public void releaseDrink(ComponentsFactory factory) {
-		this.coffeeService.release();
-		factory.getDisplay().info(Messages.RELEASING);
-		factory.getCupDispenser().release(1);
+		this.sDrink.release(factory);
 		factory.getDrinkDispenser().release(100);
 		factory.getDisplay().info(Messages.TAKE_DRINK);
+
 	}
 
 	public double getValueCoffee() {
-		return this.valueCoffee;
+		return this.valueDrink;
 	}
 }

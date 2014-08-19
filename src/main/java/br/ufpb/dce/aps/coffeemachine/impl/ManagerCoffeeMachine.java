@@ -6,40 +6,37 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerCoffeeMachine {
 
-	private ManagerDrink managerDrink = new ManagerDrink();
+	private ManagerDrink mDrink = new ManagerDrink();
 
-	public void requestDrink (Drink drink, ManagerCoins managerCoins, ComponentsFactory factory) {
+	public void iniciarPedidoDeBebida(ComponentsFactory factory, ManagerCoins mCoins, Drink drink) {
 
-		if (!managerCoins.checkCoin(this.managerDrink.getValueCoffee(),factory)) {
+		this.mDrink.makeDrink(factory, drink);
+		if (!mCoins.checkCoin(factory,
+				this.mDrink.getValueCoffee())) {
+			return;
+		}if (!this.mDrink.ingredientsDrink(factory,drink)) {
+			mCoins.ReleaseCoins(factory, false);
+			return;
+		}if (!this.mDrink.checksSugar(factory)) {
+			mCoins.ReleaseCoins(factory, false);
+			return;
+		}if (!mCoins.giveEnoughCoins(factory,
+				this.mDrink.getValueCoffee())) {
 			return;
 		}
 		
-		this.managerDrink.makeDrink(drink, factory);
+		this.mDrink.mixingDrink(factory, drink);
+		this.mDrink.releaseDrink(factory);
 
-		if (!this.managerDrink.ingredientsDrink(drink, factory)) {
-			managerCoins.ReleaseCoins(factory, false);
-			return;
-		} if (!this.managerDrink.checksSugar(factory)) {
-			managerCoins.ReleaseCoins(factory, false);
-			return;
-		} if (!managerCoins.giveEnoughCoins(factory,this.managerDrink.getValueCoffee())) {
-			return;
-		}
-		
-
-		this.managerDrink.mixingDrink(factory);
-		this.managerDrink.releaseDrink(factory);
-		
-		//Entrega o troco
-		if ((managerCoins.getTotalCoins() % this.managerDrink.getValueCoffee() != 0) && (managerCoins.getTotalCoins() > this.managerDrink.getValueCoffee())) {
-			managerCoins.changeReleases(this.managerDrink.getValueCoffee(), factory);
+		if (mCoins.getTotalCoins()% this.mDrink.getValueCoffee() != 0	&& mCoins.getTotalCoins() > this.mDrink.getValueCoffee()) {
+			mCoins.changeReleases(factory, this.mDrink.getValueCoffee());
 		}
 
-		this.messageInsertCoins(factory);
-		managerCoins.emptyBoxCoins();
+		this.menssageInsert(factory);
+		mCoins.emptyBoxCoins();
 	}
-
-	public void messageInsertCoins(ComponentsFactory factory){
+	
+	public void menssageInsert(ComponentsFactory factory){
 		factory.getDisplay().info(Messages.INSERT_COINS);
 	}
 
