@@ -1,5 +1,8 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
+import java.util.ArrayList;
+
+import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
 import br.ufpb.dce.aps.coffeemachine.Drink;
 import br.ufpb.dce.aps.coffeemachine.Messages;
@@ -66,8 +69,7 @@ public class ManagerDrink {
 	}
 
 	public boolean checksSugar(ComponentsFactory factory) {
-		if (this.sDrink.getDrink() == Drink.BLACK_SUGAR
-				|| this.sDrink.getDrink() == Drink.WHITE_SUGAR) {
+		if (this.sDrink.getDrink() == Drink.BLACK_SUGAR	|| this.sDrink.getDrink() == Drink.WHITE_SUGAR) {
 			if (!factory.getSugarDispenser().contains(5)) {
 				factory.getDisplay().warn(Messages.OUT_OF_SUGAR);
 				return false;

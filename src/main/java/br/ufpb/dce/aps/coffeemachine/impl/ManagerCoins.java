@@ -8,20 +8,27 @@ import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerCoins {
-	
-	private int totalCoins;
+
+    private int totalCoins;
 	
 	private Coin[] reverseCoins = Coin.reverse();
 	private ArrayList<Coin> boxCoins = new ArrayList<Coin>();
 	private ArrayList<Coin> auxBox = new ArrayList<Coin>();
+	private String access = "";
 
 	public void insertCoins(ComponentsFactory factory, Coin coin) throws CoffeeMachineException {
 		if(coin == null){
 			throw new CoffeeMachineException("");
 		}
-		this.totalCoins += coin.getValue();
-		this.boxCoins.add(coin);
-		factory.getDisplay().info("Total: US$ " + this.totalCoins / 100 + "." + this.totalCoins % 100);
+		if(this.access.equals("cracha")){
+			factory.getDisplay().warn(Messages.CAN_NOT_INSERT_COINS);
+			this.releaseCoinCracha(factory, coin);
+			return;
+		} else{
+			this.totalCoins += coin.getValue();
+			this.boxCoins.add(coin);
+			factory.getDisplay().info("Total: US$ " + this.totalCoins / 100 + "." + this.totalCoins % 100);
+		}
 	}
 
 	public void cancel(ComponentsFactory factory) throws CoffeeMachineException {
@@ -29,6 +36,7 @@ public class ManagerCoins {
 			throw new CoffeeMachineException("");
 		}
 		this.releaseCoins(factory, true);
+
 	}
 
 	public void changeReleases(ComponentsFactory factory, double valueDrink) {
@@ -98,5 +106,13 @@ public class ManagerCoins {
 	
 	public int getTotalCoins() {
 		return totalCoins;
+	}
+	
+	public void releaseCoinCracha(ComponentsFactory factory, Coin coin){
+		factory.getCashBox().release(coin);
+	}
+	
+	public void setType(String c) {
+		this.access = c;
 	}
 }
