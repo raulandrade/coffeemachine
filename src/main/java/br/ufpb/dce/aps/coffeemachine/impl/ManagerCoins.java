@@ -8,7 +8,7 @@ import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerCoins {
-
+	
 	private int totalCoins;
 	
 	private Coin[] reverseCoins = Coin.reverse();
@@ -29,9 +29,8 @@ public class ManagerCoins {
 			throw new CoffeeMachineException("");
 		}
 		this.releaseCoins(factory, true);
-
 	}
-	
+
 	public void changeReleases(ComponentsFactory factory, double valueDrink) {
 		this.reverseCoins = Coin.reverse();
 		for (Coin c : this.reverseCoins) {
@@ -62,7 +61,7 @@ public class ManagerCoins {
 		}
 		return (change == 0);
 	}
-
+	
 	public boolean checkCoin(ComponentsFactory factory,	double valueDrink) {
 		if (this.totalCoins < valueDrink || this.totalCoins == 0) {
 			factory.getDisplay().warn(Messages.NO_ENOUGHT_MONEY);
@@ -96,7 +95,7 @@ public class ManagerCoins {
 		this.emptyBoxCoins();
 		factory.getDisplay().info(Messages.INSERT_COINS);
 	}
-
+	
 	public int getTotalCoins() {
 		return totalCoins;
 	}

@@ -11,10 +11,13 @@ public class MyCoffeeMachine implements CoffeeMachine {
 	private ComponentsFactory factory;
 	private ManagerCoins mCoins =  new ManagerCoins(); 
 	private ManagerCoffeeMachine mCM = new ManagerCoffeeMachine();
-		
-	public MyCoffeeMachine(ComponentsFactory factory) {
+	
+	public void setFactory(ComponentsFactory factory) {
 		this.factory = factory;		
-		factory.getDisplay().info(Messages.INSERT_COINS);
+		this.mCM.messageInsertCoins(factory);
+	}
+	public void readBadge(int badgeCode) {
+		this.factory.getDisplay().info(Messages.BADGE_READ);
 	}
 	public void insertCoin(Coin coin) {
 		this.mCoins.insertCoins(this.factory, coin);
@@ -23,6 +26,6 @@ public class MyCoffeeMachine implements CoffeeMachine {
 		this.mCoins.cancel(this.factory);	
 	}
 	public void select(Drink drink) {		
-		this.mCM.requestDrink( drink, this.factory, this.mCoins);
+		this.mCM.requestDrink(drink, this.factory, this.mCoins);
 	}
 }
