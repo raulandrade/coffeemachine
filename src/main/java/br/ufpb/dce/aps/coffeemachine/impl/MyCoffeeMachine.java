@@ -9,23 +9,20 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 public class MyCoffeeMachine implements CoffeeMachine {
 
 	private ComponentsFactory factory;
-	private ManagerCoins gerenteFinanceiro =  new ManagerCoins(); 
-	private ManagerCoffeeMachine gerenteDeMaquina = new ManagerCoffeeMachine();
+	private ManagerCoins mCoins =  new ManagerCoins(); 
+	private ManagerCoffeeMachine mCM = new ManagerCoffeeMachine();
 		
 	public MyCoffeeMachine(ComponentsFactory factory) {
 		this.factory = factory;		
-		this.gerenteDeMaquina.menssageInsert(factory);
+		factory.getDisplay().info(Messages.INSERT_COINS);
 	}
-	
 	public void insertCoin(Coin coin) {
-		this.gerenteFinanceiro.insertCoins(coin, this.factory);
+		this.mCoins.insertCoins(this.factory, coin);
 	}
-
 	public void cancel(){
-		this.gerenteFinanceiro.cancel(this.factory);	
+		this.mCoins.cancel(this.factory);	
 	}
-	
 	public void select(Drink drink) {		
-		this.gerenteDeMaquina.startDrink(this.factory, this.gerenteFinanceiro, drink);
+		this.mCM.requestDrink(drink, this.factory, this.mCoins);
 	}
 }

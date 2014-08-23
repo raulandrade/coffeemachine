@@ -15,8 +15,7 @@ public class ManagerCoins {
 	private ArrayList<Coin> boxCoins = new ArrayList<Coin>();
 	private ArrayList<Coin> auxBox = new ArrayList<Coin>();
 
-	//Insere moedas (inserirMoeda) OK
-	public void insertCoins(Coin coin, ComponentsFactory factory) throws CoffeeMachineException {
+	public void insertCoins(ComponentsFactory factory, Coin coin) throws CoffeeMachineException {
 		if(coin == null){
 			throw new CoffeeMachineException("");
 		}
@@ -24,38 +23,38 @@ public class ManagerCoins {
 		this.boxCoins.add(coin);
 		factory.getDisplay().info("Total: US$ " + this.totalCoins / 100 + "." + this.totalCoins % 100);
 	}
-	
-	//Cancela (CAncelar) 
-	public void cancel(ComponentsFactory factory) throws CoffeeMachineException {	
+
+	public void cancel(ComponentsFactory factory) throws CoffeeMachineException {
 		if (this.totalCoins == 0) {
 			throw new CoffeeMachineException("");
 		}
-		this.ReleaseCoins(factory, true);
-		}
+		this.releaseCoins(factory, true);
+		
+	}
 
-	
-	public void changeReleases(ComponentsFactory factory, double valorDaBebida) {
+	public void changeReleases(ComponentsFactory factory, double drinkValue) {
 		this.reverseCoins = Coin.reverse();
 		for (Coin c : this.reverseCoins) {
-			for (Coin cC : this.auxBox) {
-				if (cC == c) {
+			for (Coin cT : this.auxBox) {
+				if (cT == c) {
 					factory.getCashBox().release(c);
 				}
 			}
 		}
 	}
-	
+
 	public void emptyBoxCoins() {
 		this.boxCoins.clear();
+		this.totalCoins = 0;
 	}
 	
-	
-	public boolean planCoins(ComponentsFactory factory,	double valueDrink) {
-		double change = this.totalCoins - valueDrink;
+	public boolean planCoins(ComponentsFactory factory,	double drinkValue) {
+		double change = this.totalCoins - drinkValue;
 		this.reverseCoins = Coin.reverse();
 		for (Coin c : this.reverseCoins) {
-			if(c.getValue() <= change && factory.getCashBox().count(c) >0){
-				while (c.getValue() <= change) {
+			if (c.getValue() <= change) {
+				int cnt = factory.getCashBox().count(c);
+				while (c.getValue() <= change && cnt > 0) {
 					change = change - c.getValue();
 					this.auxBox.add(c);
 				}
@@ -63,38 +62,27 @@ public class ManagerCoins {
 		}
 		return (change == 0);
 	}
-
 	
-	public boolean checkCoin(ComponentsFactory factory,	double ValueDrink) {
-		if (this.totalCoins < ValueDrink || this.totalCoins == 0) {
+	public boolean checkCoin(ComponentsFactory factory,	double drinkValue) {
+		if (this.totalCoins < drinkValue || this.totalCoins == 0) {
 			factory.getDisplay().warn(Messages.NO_ENOUGHT_MONEY);
-			this.ReleaseCoins(factory, false);
+			this.releaseCoins(factory, false);
+			return false;
+		}
+		return true;
+	}
+
+	public boolean giveEnoughCoins(ComponentsFactory factory, double drinkValue) {
+		if (!this.planCoins(factory, drinkValue)) {
+			factory.getDisplay().warn(Messages.NO_ENOUGHT_CHANGE);
+			this.releaseCoins(factory, false);
 			return false;
 		}
 		return true;
 	}
 	
-
-
-
-	public boolean giveEnoughCoins(ComponentsFactory factory,double valueDrink) {
-		if (this.totalCoins % valueDrink != 0 && this.totalCoins > valueDrink) {
-			if(!this.planCoins(factory, valueDrink)){
-				factory.getDisplay().warn(Messages.NO_ENOUGHT_CHANGE);
-				ReleaseCoins(factory, false);
-				return false;
-			}
-		}
-		return true;
-
-	}
-	
-	
-	
-	
-	
-	public void ReleaseCoins(ComponentsFactory factory, Boolean confirmation) {
-		if (confirmation) {
+	public void releaseCoins(ComponentsFactory factory, Boolean c) {
+		if (c == true) {
 			factory.getDisplay().warn(Messages.CANCEL);
 		}
 		for (Coin r : this.reverseCoins) {
@@ -108,6 +96,7 @@ public class ManagerCoins {
 		this.emptyBoxCoins();
 		factory.getDisplay().info(Messages.INSERT_COINS);
 	}
+	
 	public int getTotalCoins() {
 		return totalCoins;
 	}
