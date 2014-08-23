@@ -14,7 +14,7 @@ public class MyCoffeeMachine implements CoffeeMachine {
 	
 	public void setFactory(ComponentsFactory factory) {
 		this.factory = factory;		
-		this.mCM.messageInsertCoins(factory);
+		this.factory.getDisplay().info(Messages.INSERT_COINS);		
 	}
 	public void readBadge(int badgeCode) {
 		this.factory.getDisplay().info(Messages.BADGE_READ);

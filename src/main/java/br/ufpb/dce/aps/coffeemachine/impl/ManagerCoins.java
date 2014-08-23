@@ -112,7 +112,8 @@ public class ManagerCoins {
 		factory.getCashBox().release(coin);
 	}
 	
-	public void setType(String c) {
+	public void setAccess(String c) {
 		this.access = c;
 	}
+	
 }

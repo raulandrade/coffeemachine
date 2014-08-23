@@ -7,6 +7,8 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 public class ManagerCoffeeMachine {
 
 	private ManagerDrink mDrink = new ManagerDrink();
+	private static String access = "";
+	private int ac = 0;
 
 	public void requestDrink(Drink drink, ComponentsFactory factory, ManagerCoins managerCoins) {
 		this.mDrink.makeDrink(factory, drink);
@@ -30,11 +32,32 @@ public class ManagerCoffeeMachine {
 		if (managerCoins.getTotalCoins() >= this.mDrink.getValueCoffee()) {
 			managerCoins.changeReleases(factory, this.mDrink.getValueCoffee());
 		}
-		this.messageInsertCoins(factory);
+		factory.getDisplay().info(Messages.INSERT_COINS);
 		managerCoins.emptyBoxCoins();
 	}
 
-	public void messageInsertCoins(ComponentsFactory factory) {
-		factory.getDisplay().info(Messages.INSERT_COINS);
+	public void startCracha(ComponentsFactory factory, ManagerCoins managerCoins, int c) {
+		if(managerCoins.getTotalCoins() < 0){
+			factory.getDisplay().info(Messages.BADGE_READ);
+			this.ac = c;
+			ManagerCoffeeMachine.setAccess("cracha");
+		} else{
+			factory.getDisplay().warn(Messages.CAN_NOT_READ_BADGE);
+			return;
+		}
 	}
+	
+	public void startCoins(ComponentsFactory factory) {
+		factory.getDisplay().info(Messages.INSERT_COINS);
+		ManagerCoffeeMachine.setAccess("moedas");
+	}
+		
+	public static void setAccess(String a) {
+		access = a;
+	}
+	
+	public String getAccess(){
+		return access;
+	}
+
 }
