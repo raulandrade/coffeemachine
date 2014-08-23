@@ -23,6 +23,6 @@ public class MyCoffeeMachine implements CoffeeMachine {
 		this.mCoins.cancel(this.factory);	
 	}
 	public void select(Drink drink) {		
-		this.mCM.requestDrink(drink, this.factory, this.mCoins);
+		this.mCM.requestDrink( drink, this.factory, this.mCoins);
 	}
 }

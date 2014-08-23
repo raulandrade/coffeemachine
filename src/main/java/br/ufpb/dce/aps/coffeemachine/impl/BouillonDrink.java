@@ -15,4 +15,3 @@ public class BouillonDrink extends ServiceDrink {
 		factory.getCupDispenser().release(1);
 	}
 }
-

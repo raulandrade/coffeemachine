@@ -10,7 +10,7 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 public class ManagerCoins {
 
 	private int totalCoins;
-
+	
 	private Coin[] reverseCoins = Coin.reverse();
 	private ArrayList<Coin> boxCoins = new ArrayList<Coin>();
 	private ArrayList<Coin> auxBox = new ArrayList<Coin>();
@@ -29,10 +29,10 @@ public class ManagerCoins {
 			throw new CoffeeMachineException("");
 		}
 		this.releaseCoins(factory, true);
-		
-	}
 
-	public void changeReleases(ComponentsFactory factory, double drinkValue) {
+	}
+	
+	public void changeReleases(ComponentsFactory factory, double valueDrink) {
 		this.reverseCoins = Coin.reverse();
 		for (Coin c : this.reverseCoins) {
 			for (Coin cT : this.auxBox) {
@@ -42,14 +42,14 @@ public class ManagerCoins {
 			}
 		}
 	}
-
+	
 	public void emptyBoxCoins() {
 		this.boxCoins.clear();
 		this.totalCoins = 0;
 	}
 	
-	public boolean planCoins(ComponentsFactory factory,	double drinkValue) {
-		double change = this.totalCoins - drinkValue;
+	public boolean planCoins(ComponentsFactory factory, double valueDrink) {
+		double change = this.totalCoins - valueDrink;
 		this.reverseCoins = Coin.reverse();
 		for (Coin c : this.reverseCoins) {
 			if (c.getValue() <= change) {
@@ -62,18 +62,18 @@ public class ManagerCoins {
 		}
 		return (change == 0);
 	}
-	
-	public boolean checkCoin(ComponentsFactory factory,	double drinkValue) {
-		if (this.totalCoins < drinkValue || this.totalCoins == 0) {
+
+	public boolean checkCoin(ComponentsFactory factory,	double valueDrink) {
+		if (this.totalCoins < valueDrink || this.totalCoins == 0) {
 			factory.getDisplay().warn(Messages.NO_ENOUGHT_MONEY);
 			this.releaseCoins(factory, false);
 			return false;
 		}
 		return true;
 	}
-
-	public boolean giveEnoughCoins(ComponentsFactory factory, double drinkValue) {
-		if (!this.planCoins(factory, drinkValue)) {
+	
+	public boolean giveEnoughCoins(ComponentsFactory factory, double valueDrink) {
+		if (!this.planCoins(factory, valueDrink)) {
 			factory.getDisplay().warn(Messages.NO_ENOUGHT_CHANGE);
 			this.releaseCoins(factory, false);
 			return false;
@@ -82,7 +82,7 @@ public class ManagerCoins {
 	}
 	
 	public void releaseCoins(ComponentsFactory factory, Boolean c) {
-		if (c == true) {
+		if (c) {
 			factory.getDisplay().warn(Messages.CANCEL);
 		}
 		for (Coin r : this.reverseCoins) {
@@ -96,7 +96,7 @@ public class ManagerCoins {
 		this.emptyBoxCoins();
 		factory.getDisplay().info(Messages.INSERT_COINS);
 	}
-	
+
 	public int getTotalCoins() {
 		return totalCoins;
 	}

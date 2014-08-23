@@ -38,21 +38,27 @@ public class ManagerDrink {
 				factory.getDisplay().warn(Messages.OUT_OF_CUP);
 				return false;
 			}
-		}if (!factory.getWaterDispenser().contains(w)) {
+		}
+		if (!factory.getWaterDispenser().contains(w)) {
 			factory.getDisplay().warn(Messages.OUT_OF_WATER);
 			return false;
-		}if (p > 0) {
+		}
+		if (p > 0) {
 			if (!factory.getCoffeePowderDispenser().contains(p)) {
 				factory.getDisplay().warn(Messages.OUT_OF_COFFEE_POWDER);
 				return false;
 			}
-		}if (this.sDrink.getDrink() == Drink.WHITE || this.sDrink.getDrink() == Drink.WHITE_SUGAR) {
+		}
+		if (this.sDrink.getDrink() == Drink.WHITE
+				|| this.sDrink.getDrink() == Drink.WHITE_SUGAR) {
 			if (!factory.getCreamerDispenser().contains(cr)) {
 				factory.getDisplay().warn(Messages.OUT_OF_CREAMER);
 				return false;
 			}
-		}if (s > 0) {
+		}
+		if (s > 0) {
 			if (!factory.getBouillonDispenser().contains(s)) {
+				factory.getDisplay().warn(Messages.OUT_OF_BOUILLON_POWDER);
 				return false;
 			}
 		}
@@ -84,8 +90,8 @@ public class ManagerDrink {
 		factory.getDrinkDispenser().release(100);
 		factory.getDisplay().info(Messages.TAKE_DRINK);
 	}
-	
+
 	public double getValueCoffee() {
 		return this.valueDrink;
-	}
+	}	
 }
