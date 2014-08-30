@@ -9,18 +9,18 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 public class MyCoffeeMachine implements CoffeeMachine {
 
 	private ComponentsFactory factory;
-	private ManagerCoins mCoins =  new ManagerCoins(); 
+	private ManagerCoins mCoins = new ManagerCoins(); 
 	private ManagerCoffeeMachine mCM = new ManagerCoffeeMachine();
 		
 	public void setFactory(ComponentsFactory factory) {
 		this.factory = factory;		
-		this.mCM.startWithCracha(factory);
+		this.mCM.startWithCoins(factory);
 	}
-	
+
 	public void readBadge(int badgeCode) {
-		this.mCM.startWithCoins(badgeCode, factory, this.mCoins);
+		this.mCM.startWithCracha(factory, this.mCoins, badgeCode);
 	}
-	
+
 	public void insertCoin(Coin coin) {
 		this.mCoins.insertCoins(this.factory, coin, this.mCM.getAccess());
 	}
@@ -32,8 +32,6 @@ public class MyCoffeeMachine implements CoffeeMachine {
 	public void select(Drink drink) {		
 		this.mCM.requestDrink(drink, this.factory, this.mCoins);
 	}
-
-	
 
 	
 }

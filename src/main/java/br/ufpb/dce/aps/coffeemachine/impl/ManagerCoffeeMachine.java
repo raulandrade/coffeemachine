@@ -10,15 +10,15 @@ public class ManagerCoffeeMachine {
 	private static String access = "";
 	private int ac = 0;
 	
-	public void requestDrink(Drink drink, ComponentsFactory factory,ManagerCoins managerCoins) {
+	public void requestDrink(Drink drink, ComponentsFactory factory, ManagerCoins managerCoins) {
 		if (!(access.equals("cracha"))){
-			startRequestWithCoins(factory, managerCoins, drink);
+			startRequestWithCoins(drink, factory, managerCoins);
 		}else{
 			startRequestWithCracha(factory, drink);
 		}
 	}
-		
-	public void startRequestWithCoins(ComponentsFactory factory, ManagerCoins managerCoins, Drink drink){
+
+	public void startRequestWithCoins(Drink drink, ComponentsFactory factory, ManagerCoins managerCoins){
 		this.mDrink.makeDrink(factory, drink);
 		if (!managerCoins.checkCoin(factory, this.mDrink.getValueDrink())) {
 			return;
@@ -34,7 +34,7 @@ public class ManagerCoffeeMachine {
 		if (!managerCoins.giveEnoughCoins(factory, this.mDrink.getValueDrink())) {
 			return;
 		}
-		
+	
 		this.mDrink.mixingDrink(factory, drink);
 		this.mDrink.releaseDrink(factory);
 
@@ -42,22 +42,13 @@ public class ManagerCoffeeMachine {
 			managerCoins.changeReleases(factory, this.mDrink.getValueDrink());
 		}
 
-		factory.getDisplay().info(Messages.INSERT_COINS);
-		ManagerCoffeeMachine.setAccess("");
-		
+		this.restartFactory(factory);
 		managerCoins.emptyBoxCoins();	
-	}
+		}
 	
-	public void startWithCoins(int cracha, ComponentsFactory factory, ManagerCoins managerCoins) {
-		if(managerCoins.getTotalCoins()>0){
-			factory.getDisplay().warn(Messages.CAN_NOT_READ_BADGE);
-			return;
-		}
-		else{
-			factory.getDisplay().info(Messages.BADGE_READ);
-			this.ac = cracha;
-			ManagerCoffeeMachine.setAccess("cracha");
-		}
+	public void startWithCoins(ComponentsFactory factory) {
+		factory.getDisplay().info(Messages.INSERT_COINS);
+		ManagerCoffeeMachine.setAccess("coins");
 	}
 	
 	public void startRequestWithCracha(ComponentsFactory factory, Drink drink){
@@ -68,25 +59,40 @@ public class ManagerCoffeeMachine {
 		if (!this.mDrink.checksSugar(factory)) {
 			return;
 		}
-		factory.getPayrollSystem().debit(mDrink.getValueDrink(), this.ac);
+		if(!factory.getPayrollSystem().debit(mDrink.getValueDrink(), this.ac)){
+			factory.getDisplay().warn(Messages.UNKNOWN_BADGE_CODE);
+			this.restartFactory(factory);
+			return;
+		}
 		
 		this.mDrink.mixingDrink(factory, drink);
 		this.mDrink.releaseDrink(factory);
-
-		factory.getDisplay().info(Messages.INSERT_COINS);
-		ManagerCoffeeMachine.setAccess("");
-	}
-
-	public void startWithCracha(ComponentsFactory factory) {
-			factory.getDisplay().info(Messages.INSERT_COINS);
-			ManagerCoffeeMachine.setAccess("coins");
+		this.restartFactory(factory);
 	}
 	
+	public void startWithCracha(ComponentsFactory factory, ManagerCoins managerCoins, int cracha) {
+		if(managerCoins.getTotalCoins()>0){
+			factory.getDisplay().warn(Messages.CAN_NOT_READ_BADGE);
+			return;
+		}
+		else{
+			factory.getDisplay().info(Messages.BADGE_READ);
+			this.ac = cracha;
+			ManagerCoffeeMachine.setAccess("cracha");
+		}
+	}
+		
 	public String getAccess(){
 		return access;
 	}
 	
-	public static void setAccess(String accessMode) {
-		access = accessMode;
+	public static void setAccess(String novoModo) {
+		access = novoModo;
 	}
+	
+	public void restartFactory(ComponentsFactory factory){
+		factory.getDisplay().info(Messages.INSERT_COINS);
+		ManagerCoffeeMachine.setAccess("");
+	}
+
 }
