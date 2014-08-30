@@ -94,7 +94,7 @@ public class ManagerDrink {
 		factory.getDisplay().info(Messages.TAKE_DRINK);
 	}
 
-	public double getValueCoffee() {
+	public int getValueDrink() {
 		return this.valueDrink;
 	}
 }

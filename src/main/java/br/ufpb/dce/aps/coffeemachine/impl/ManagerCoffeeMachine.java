@@ -9,10 +9,18 @@ public class ManagerCoffeeMachine {
 	private ManagerDrink mDrink = new ManagerDrink();
 	private static String access = "";
 	private int ac = 0;
-
-	public void requestDrink(Drink drink, ComponentsFactory factory, ManagerCoins managerCoins) {
+	
+	public void requestDrink(Drink drink, ComponentsFactory factory,ManagerCoins managerCoins) {
+		if (!(access.equals("cracha"))){
+			startRequestWithCoins(factory, managerCoins, drink);
+		}else{
+			startRequestWithCracha(factory, drink);
+		}
+	}
+		
+	public void startRequestWithCoins(ComponentsFactory factory, ManagerCoins managerCoins, Drink drink){
 		this.mDrink.makeDrink(factory, drink);
-		if (!managerCoins.checkCoin(factory, this.mDrink.getValueCoffee())) {
+		if (!managerCoins.checkCoin(factory, this.mDrink.getValueDrink())) {
 			return;
 		}
 		if (!this.mDrink.ingredientsDrink(factory, drink)) {
@@ -23,41 +31,62 @@ public class ManagerCoffeeMachine {
 			managerCoins.releaseCoins(factory, false);
 			return;
 		}
-		if (!managerCoins.giveEnoughCoins(factory, this.mDrink.getValueCoffee())) {
+		if (!managerCoins.giveEnoughCoins(factory, this.mDrink.getValueDrink())) {
 			return;
 		}
+		
 		this.mDrink.mixingDrink(factory, drink);
 		this.mDrink.releaseDrink(factory);
 
-		if (managerCoins.getTotalCoins() >= this.mDrink.getValueCoffee()) {
-			managerCoins.changeReleases(factory, this.mDrink.getValueCoffee());
+		if (managerCoins.getTotalCoins() >= this.mDrink.getValueDrink()) {
+			managerCoins.changeReleases(factory, this.mDrink.getValueDrink());
 		}
-		factory.getDisplay().info(Messages.INSERT_COINS);
-		managerCoins.emptyBoxCoins();
-	}
 
-	public void startCracha(ComponentsFactory factory, ManagerCoins managerCoins, int c) {
-		if(managerCoins.getTotalCoins() < 0){
-			factory.getDisplay().info(Messages.BADGE_READ);
-			this.ac = c;
-			ManagerCoffeeMachine.setAccess("cracha");
-		} else{
+		factory.getDisplay().info(Messages.INSERT_COINS);
+		ManagerCoffeeMachine.setAccess("");
+		
+		managerCoins.emptyBoxCoins();	
+	}
+	
+	public void startWithCoins(int cracha, ComponentsFactory factory, ManagerCoins managerCoins) {
+		if(managerCoins.getTotalCoins()>0){
 			factory.getDisplay().warn(Messages.CAN_NOT_READ_BADGE);
 			return;
 		}
+		else{
+			factory.getDisplay().info(Messages.BADGE_READ);
+			this.ac = cracha;
+			ManagerCoffeeMachine.setAccess("cracha");
+		}
 	}
 	
-	public void startCoins(ComponentsFactory factory) {
-		factory.getDisplay().info(Messages.INSERT_COINS);
-		ManagerCoffeeMachine.setAccess("moedas");
-	}
+	public void startRequestWithCracha(ComponentsFactory factory, Drink drink){
+		this.mDrink.makeDrink(factory, drink);
+		if (!this.mDrink.ingredientsDrink(factory, drink)) {
+			return;
+		}
+		if (!this.mDrink.checksSugar(factory)) {
+			return;
+		}
+		factory.getPayrollSystem().debit(mDrink.getValueDrink(), this.ac);
 		
-	public static void setAccess(String a) {
-		access = a;
+		this.mDrink.mixingDrink(factory, drink);
+		this.mDrink.releaseDrink(factory);
+
+		factory.getDisplay().info(Messages.INSERT_COINS);
+		ManagerCoffeeMachine.setAccess("");
+	}
+
+	public void startWithCracha(ComponentsFactory factory) {
+			factory.getDisplay().info(Messages.INSERT_COINS);
+			ManagerCoffeeMachine.setAccess("coins");
 	}
 	
 	public String getAccess(){
 		return access;
 	}
-
+	
+	public static void setAccess(String accessMode) {
+		access = accessMode;
+	}
 }

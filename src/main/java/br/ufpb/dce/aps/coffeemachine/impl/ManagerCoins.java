@@ -9,26 +9,27 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerCoins {
 
-    private int totalCoins;
+	private int totalCoins;
 	
 	private Coin[] reverseCoins = Coin.reverse();
 	private ArrayList<Coin> boxCoins = new ArrayList<Coin>();
 	private ArrayList<Coin> auxBox = new ArrayList<Coin>();
 
-	private boolean initialState;
-
-	public void insertCoins(ComponentsFactory factory, Coin coin) throws CoffeeMachineException {
+	public void insertCoins(ComponentsFactory factory, Coin coin, String modo)throws CoffeeMachineException {
 		if(coin == null){
 			throw new CoffeeMachineException("");
 		}
-		if(initialState){
+		if(modo.equals("cracha")){
 			factory.getDisplay().warn(Messages.CAN_NOT_INSERT_COINS);
-			this.releaseCoinCracha(factory, coin);
+			this.releaseCoinsCracha(coin, factory);
 			return;
 		}
-		this.totalCoins += coin.getValue();
-		this.boxCoins.add(coin);
-		factory.getDisplay().info("Total: US$ " + this.totalCoins / 100 + "." + this.totalCoins % 100);
+		else{
+			this.totalCoins += coin.getValue();
+			this.boxCoins.add(coin);
+			factory.getDisplay().info("Total: US$ " + this.totalCoins / 100 + "." + this.totalCoins % 100);
+
+		}
 	}
 
 	public void cancel(ComponentsFactory factory) throws CoffeeMachineException {
@@ -87,7 +88,6 @@ public class ManagerCoins {
 		}
 		return true;
 	}
-	
 	public void releaseCoins(ComponentsFactory factory, Boolean c) {
 		if (c) {
 			factory.getDisplay().warn(Messages.CANCEL);
@@ -108,18 +108,7 @@ public class ManagerCoins {
 		return totalCoins;
 	}
 	
-	public void releaseCoinCracha(ComponentsFactory factory, Coin coin){
+	public void releaseCoinsCracha(Coin coin, ComponentsFactory factory){
 		factory.getCashBox().release(coin);
-	}
-	
-	public void readBadge(int badgeCode, ComponentsFactory factory) {
-		if(this.boxCoins.size() > 0){
-			factory.getDisplay().warn(Messages.CAN_NOT_READ_BADGE);
-		}else{
-			factory.getDisplay().info(Messages.BADGE_READ);
-			this.initialState = true;
-			
-		}
-		
 	}
 }
