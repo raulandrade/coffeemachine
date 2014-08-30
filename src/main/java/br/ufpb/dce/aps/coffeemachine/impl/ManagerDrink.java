@@ -1,10 +1,12 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
 import java.util.ArrayList;
+import br.ufpb.dce.aps.coffeemachine.Button;
+
 
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
-import br.ufpb.dce.aps.coffeemachine.Drink;
+//import br.ufpb.dce.aps.coffeemachine.Drink;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerDrink {
@@ -12,11 +14,11 @@ public class ManagerDrink {
 	private ServiceDrink sDrink;
 	private int valueDrink = 35, valueBouillon = 25;
 
-	public void makeDrink(ComponentsFactory factory, Drink drink) {
-		if (drink == drink.WHITE || drink == drink.WHITE_SUGAR) {
+	public void makeDrink(ComponentsFactory factory, Button drink) {
+		if (drink == Button.BUTTON_3 || drink == Button.BUTTON_4) {
 			this.sDrink = new WhiteDrink(drink);
 		}
-		else if (drink == drink.BLACK || drink == drink.BLACK_SUGAR) {
+		else if (drink == Button.BUTTON_1 || drink == Button.BUTTON_2) {
 			this.sDrink = new BlackDrink(drink);
 		} 
 		else {
@@ -25,17 +27,17 @@ public class ManagerDrink {
 		}
 	}
 
-	public boolean ingredientsDrink(ComponentsFactory factory, Drink drink) {
-		if (this.sDrink.getDrink() == drink.BLACK || this.sDrink.getDrink() == Drink.BLACK_SUGAR) {
+	public boolean ingredientsDrink(ComponentsFactory factory, Button drink) {
+		if (this.sDrink.getButton() == Button.BUTTON_1 || this.sDrink.getButton() == Button.BUTTON_2) {
 			return (this.checkIngredients(factory, drink, 1, 100, 15, 0, 0));
-		}else if (this.sDrink.getDrink() == drink.WHITE || this.sDrink.getDrink() == drink.WHITE_SUGAR) {
+		}else if (this.sDrink.getButton() == Button.BUTTON_3 || this.sDrink.getButton() == Button.BUTTON_4) {
 			return (this.checkIngredients(factory, drink, 1, 80, 15, 20, 0));
 		}else {
 			return (this.checkIngredients(factory, drink, 1, 100, 0, 0, 10));
 		}
 	}
 	
-	public boolean checkIngredients(ComponentsFactory factory, Drink drink, int c, int w, int p, int cr, int s) {
+	public boolean checkIngredients(ComponentsFactory factory, Button drink, int c, int w, int p, int cr, int s) {
 		if (c > 0) {
 			if (!factory.getCupDispenser().contains(c)) {
 				factory.getDisplay().warn(Messages.OUT_OF_CUP);
@@ -52,8 +54,7 @@ public class ManagerDrink {
 				return false;
 			}
 		}
-		if (this.sDrink.getDrink() == Drink.WHITE
-				|| this.sDrink.getDrink() == Drink.WHITE_SUGAR) {
+		if (this.sDrink.getButton() == Button.BUTTON_3 || this.sDrink.getButton() == Button.BUTTON_4) {
 			if (!factory.getCreamerDispenser().contains(cr)) {
 				factory.getDisplay().warn(Messages.OUT_OF_CREAMER);
 				return false;
@@ -69,7 +70,7 @@ public class ManagerDrink {
 	}
 
 	public boolean checksSugar(ComponentsFactory factory) {
-		if (this.sDrink.getDrink() == Drink.BLACK_SUGAR	|| this.sDrink.getDrink() == Drink.WHITE_SUGAR) {
+		if (this.sDrink.getButton() == Button.BUTTON_2	|| this.sDrink.getButton() == Button.BUTTON_4) {
 			if (!factory.getSugarDispenser().contains(5)) {
 				factory.getDisplay().warn(Messages.OUT_OF_SUGAR);
 				return false;
@@ -78,9 +79,9 @@ public class ManagerDrink {
 		return true;
 	}
 
-	public void mixingDrink(ComponentsFactory factory, Drink drink) {
+	public void mixingDrink(ComponentsFactory factory, Button drink) {
 		factory.getDisplay().info(Messages.MIXING);
-		if (this.sDrink.getDrink() == drink.BOUILLON) {
+		if (this.sDrink.getButton() == Button.BUTTON_5) {
 			factory.getBouillonDispenser().release(10);
 		} 
 		else {

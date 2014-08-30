@@ -1,7 +1,9 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
-import br.ufpb.dce.aps.coffeemachine.Drink;
+//import br.ufpb.dce.aps.coffeemachine.Drink;
+import br.ufpb.dce.aps.coffeemachine.Button;
+
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerCoffeeMachine {
@@ -10,7 +12,7 @@ public class ManagerCoffeeMachine {
 	private static String access = "";
 	private int ac = 0;
 	
-	public void requestDrink(Drink drink, ComponentsFactory factory, ManagerCoins managerCoins) {
+	public void requestDrink(Button drink, ComponentsFactory factory, ManagerCoins managerCoins) {
 		if (!(access.equals("cracha"))){
 			startRequestWithCoins(drink, factory, managerCoins);
 		}else{
@@ -18,7 +20,7 @@ public class ManagerCoffeeMachine {
 		}
 	}
 
-	public void startRequestWithCoins(Drink drink, ComponentsFactory factory, ManagerCoins managerCoins){
+	public void startRequestWithCoins(Button drink, ComponentsFactory factory, ManagerCoins managerCoins){
 		this.mDrink.makeDrink(factory, drink);
 		if (!managerCoins.checkCoin(factory, this.mDrink.getValueDrink())) {
 			return;
@@ -51,7 +53,7 @@ public class ManagerCoffeeMachine {
 		ManagerCoffeeMachine.setAccess("coins");
 	}
 	
-	public void startRequestWithCracha(ComponentsFactory factory, Drink drink){
+	public void startRequestWithCracha(ComponentsFactory factory, Button drink){
 		this.mDrink.makeDrink(factory, drink);
 		if (!this.mDrink.ingredientsDrink(factory, drink)) {
 			return;

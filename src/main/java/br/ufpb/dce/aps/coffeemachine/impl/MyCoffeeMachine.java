@@ -1,9 +1,11 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
+import br.ufpb.dce.aps.coffeemachine.Button;
+
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
-import br.ufpb.dce.aps.coffeemachine.Drink;
+//import br.ufpb.dce.aps.coffeemachine.Drink;
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class MyCoffeeMachine implements CoffeeMachine {
@@ -29,7 +31,7 @@ public class MyCoffeeMachine implements CoffeeMachine {
 		this.mCoins.cancel(this.factory);	
 	}
 	
-	public void select(Drink drink) {		
+	public void select(Button drink) {		
 		this.mCM.requestDrink(drink, this.factory, this.mCoins);
 	}
 
