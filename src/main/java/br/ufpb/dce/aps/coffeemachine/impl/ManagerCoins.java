@@ -1,7 +1,6 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
 import java.util.ArrayList;
-
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachineException;
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
@@ -13,13 +12,13 @@ public class ManagerCoins {
 	
 	private Coin[] reverseCoins = Coin.reverse();
 	private ArrayList<Coin> boxCoins = new ArrayList<Coin>();
-	private ArrayList<Coin> auxBox = new ArrayList<Coin>();
+	private ArrayList<Coin> auxBoxCoins = new ArrayList<Coin>();
 
-	public void insertCoins(ComponentsFactory factory, Coin coin, String modo)throws CoffeeMachineException {
+	public void insertCoins(ComponentsFactory factory, Coin coin, String mode)throws CoffeeMachineException {
 		if(coin == null){
 			throw new CoffeeMachineException("");
 		}
-		if(modo.equals("cracha")){
+		if(mode.equals("cracha")){
 			factory.getDisplay().warn(Messages.CAN_NOT_INSERT_COINS);
 			this.releaseCoinsCracha(coin, factory);
 			return;
@@ -43,7 +42,7 @@ public class ManagerCoins {
 	public void changeReleases(ComponentsFactory factory, double valueDrink) {
 		this.reverseCoins = Coin.reverse();
 		for (Coin c : this.reverseCoins) {
-			for (Coin cT : this.auxBox) {
+			for (Coin cT : this.auxBoxCoins) {
 				if (cT == c) {
 					factory.getCashBox().release(c);
 				}
@@ -64,7 +63,7 @@ public class ManagerCoins {
 				int cnt = factory.getCashBox().count(c);
 				while (c.getValue() <= change && cnt > 0) {
 					change = change - c.getValue();
-					this.auxBox.add(c);
+					this.auxBoxCoins.add(c);
 				}
 			}
 		}
@@ -88,8 +87,9 @@ public class ManagerCoins {
 		}
 		return true;
 	}
-	public void releaseCoins(ComponentsFactory factory, Boolean c) {
-		if (c) {
+	
+	public void releaseCoins(ComponentsFactory factory, Boolean state) {
+		if (state) {
 			factory.getDisplay().warn(Messages.CANCEL);
 		}
 		for (Coin r : this.reverseCoins) {

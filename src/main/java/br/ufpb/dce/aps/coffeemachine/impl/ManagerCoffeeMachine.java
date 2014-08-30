@@ -1,16 +1,14 @@
 package br.ufpb.dce.aps.coffeemachine.impl;
 
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
-//import br.ufpb.dce.aps.coffeemachine.Drink;
 import br.ufpb.dce.aps.coffeemachine.Button;
-
 import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class ManagerCoffeeMachine {
 
-	private ManagerDrink mDrink = new ManagerDrink();
+	private ManagerDrink ManagerDrink = new ManagerDrink();
 	private static String access = "";
-	private int ac = 0;
+	private int accessCode = 0;
 	
 	public void requestDrink(Button drink, ComponentsFactory factory, ManagerCoins managerCoins) {
 		if (!(access.equals("cracha"))){
@@ -19,29 +17,29 @@ public class ManagerCoffeeMachine {
 			startRequestWithCracha(factory, drink);
 		}
 	}
-
+	
 	public void startRequestWithCoins(Button drink, ComponentsFactory factory, ManagerCoins managerCoins){
-		this.mDrink.makeDrink(factory, drink);
-		if (!managerCoins.checkCoin(factory, this.mDrink.getValueDrink())) {
+		this.ManagerDrink.makeDrink(factory, drink);
+		if (!managerCoins.checkCoin(factory, this.ManagerDrink.getValueDrink())) {
 			return;
 		}
-		if (!this.mDrink.ingredientsDrink(factory, drink)) {
+		if (!this.ManagerDrink.ingredientsDrink(factory, drink)) {
 			managerCoins.releaseCoins(factory, false);
 			return;
 		}
-		if (!this.mDrink.checksSugar(factory)) {
+		if (!this.ManagerDrink.checksSugar(factory)) {
 			managerCoins.releaseCoins(factory, false);
 			return;
 		}
-		if (!managerCoins.giveEnoughCoins(factory, this.mDrink.getValueDrink())) {
+		if (!managerCoins.giveEnoughCoins(factory, this.ManagerDrink.getValueDrink())) {
 			return;
 		}
 	
-		this.mDrink.mixingDrink(factory, drink);
-		this.mDrink.releaseDrink(factory);
+		this.ManagerDrink.mixingDrink(factory, drink);
+		this.ManagerDrink.releaseDrink(factory);
 
-		if (managerCoins.getTotalCoins() >= this.mDrink.getValueDrink()) {
-			managerCoins.changeReleases(factory, this.mDrink.getValueDrink());
+		if (managerCoins.getTotalCoins() >= this.ManagerDrink.getValueDrink()) {
+			managerCoins.changeReleases(factory, this.ManagerDrink.getValueDrink());
 		}
 
 		this.restartFactory(factory);
@@ -54,21 +52,21 @@ public class ManagerCoffeeMachine {
 	}
 	
 	public void startRequestWithCracha(ComponentsFactory factory, Button drink){
-		this.mDrink.makeDrink(factory, drink);
-		if (!this.mDrink.ingredientsDrink(factory, drink)) {
+		this.ManagerDrink.makeDrink(factory, drink);
+		if (!this.ManagerDrink.ingredientsDrink(factory, drink)) {
 			return;
 		}
-		if (!this.mDrink.checksSugar(factory)) {
+		if (!this.ManagerDrink.checksSugar(factory)) {
 			return;
 		}
-		if(!factory.getPayrollSystem().debit(mDrink.getValueDrink(), this.ac)){
+		if(!factory.getPayrollSystem().debit(ManagerDrink.getValueDrink(), this.accessCode)){
 			factory.getDisplay().warn(Messages.UNKNOWN_BADGE_CODE);
 			this.restartFactory(factory);
 			return;
 		}
 		
-		this.mDrink.mixingDrink(factory, drink);
-		this.mDrink.releaseDrink(factory);
+		this.ManagerDrink.mixingDrink(factory, drink);
+		this.ManagerDrink.releaseDrink(factory);
 		this.restartFactory(factory);
 	}
 	
@@ -79,7 +77,7 @@ public class ManagerCoffeeMachine {
 		}
 		else{
 			factory.getDisplay().info(Messages.BADGE_READ);
-			this.ac = cracha;
+			this.accessCode = cracha;
 			ManagerCoffeeMachine.setAccess("cracha");
 		}
 	}
@@ -88,8 +86,8 @@ public class ManagerCoffeeMachine {
 		return access;
 	}
 	
-	public static void setAccess(String novoModo) {
-		access = novoModo;
+	public static void setAccess(String newAccessMode) {
+		access = newAccessMode;
 	}
 	
 	public void restartFactory(ComponentsFactory factory){

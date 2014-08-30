@@ -2,37 +2,34 @@ package br.ufpb.dce.aps.coffeemachine.impl;
 
 import br.ufpb.dce.aps.coffeemachine.CoffeeMachine;
 import br.ufpb.dce.aps.coffeemachine.Button;
-
 import br.ufpb.dce.aps.coffeemachine.Coin;
 import br.ufpb.dce.aps.coffeemachine.ComponentsFactory;
-//import br.ufpb.dce.aps.coffeemachine.Drink;
-import br.ufpb.dce.aps.coffeemachine.Messages;
 
 public class MyCoffeeMachine implements CoffeeMachine {
 
 	private ComponentsFactory factory;
-	private ManagerCoins mCoins = new ManagerCoins(); 
-	private ManagerCoffeeMachine mCM = new ManagerCoffeeMachine();
+	private ManagerCoins managerCoins = new ManagerCoins(); 
+	private ManagerCoffeeMachine managerCoffeeMachine = new ManagerCoffeeMachine();
 		
 	public void setFactory(ComponentsFactory factory) {
 		this.factory = factory;		
-		this.mCM.startWithCoins(factory);
+		this.managerCoffeeMachine.startWithCoins(factory);
 	}
 
 	public void readBadge(int badgeCode) {
-		this.mCM.startWithCracha(factory, this.mCoins, badgeCode);
+		this.managerCoffeeMachine.startWithCracha(this.factory, this.managerCoins, badgeCode);
 	}
 
 	public void insertCoin(Coin coin) {
-		this.mCoins.insertCoins(this.factory, coin, this.mCM.getAccess());
+		this.managerCoins.insertCoins(this.factory, coin, this.managerCoffeeMachine.getAccess());
 	}
 
 	public void cancel(){
-		this.mCoins.cancel(this.factory);	
+		this.managerCoins.cancel(this.factory);	
 	}
 	
 	public void select(Button drink) {		
-		this.mCM.requestDrink(drink, this.factory, this.mCoins);
+		this.managerCoffeeMachine.requestDrink(drink, this.factory, this.managerCoins);
 	}
 
 	

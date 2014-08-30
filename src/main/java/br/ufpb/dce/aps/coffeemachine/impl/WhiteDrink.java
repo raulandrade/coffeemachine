@@ -8,7 +8,7 @@ import br.ufpb.dce.aps.coffeemachine.Messages;
 public class WhiteDrink extends ServiceDrink {
 
 	public WhiteDrink(Button button) {
-		if (this.button == button.BUTTON_4) {
+		if (this.button == Button.BUTTON_4) {
 			this.button = Button.BUTTON_4;
 		}else {
 			this.button = Button.BUTTON_3;
